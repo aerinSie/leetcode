@@ -1,0 +1,74 @@
+package leetcode;
+
+import java.util.Arrays;
+
+public class Leetcode14 {
+
+	public static void main(String[] args) {
+		//14. Longest Common Prefix
+		String[] x = { "flower", "flow", "flight" };
+		String[] y = { "racedcar", "dog", "racecar", "car" };
+		// longestCommonPrefix(x);
+		longestCommonPrefix(y);
+	}
+
+	public static String longestCommonPrefix(String[] strs) {
+		// 選出最小的長度
+		int[] tmp = new int[strs.length];
+		for (int i = 0; i < strs.length; i++) {
+			int y = strs[i].toString().length();
+			tmp[i] = y;
+		}
+		Arrays.sort(tmp);
+		int len = tmp[0];// 共需比幾個字
+		System.out.println("len:" + len);
+
+		// 有幾個選手
+		int arrSize = strs.length;
+		int count = 0;
+		boolean loop = false;
+		for (int j = 0; j < len; j++) {
+			char character = strs[0].charAt(j);// 取出第一個詞的第一個字
+			int ascii = (int) character;
+			System.out.print("j:" + j);
+			System.out.print(" ,character:" + character);
+			System.out.println(" ,ascii:" + ascii);
+			for (int i = 1; i < arrSize; i++) {// 須單挑幾次
+
+				char chx = strs[i].charAt(j);// 取出第二個詞的第一個字
+
+				System.out.print("chx:" + chx);
+				int x = (int) chx;
+				System.out.print(" ,ascii x:" + x);
+
+				if ((x - ascii) == 0) {
+					loop = true;
+
+				} else {
+					loop = false;
+					break;
+				}
+				System.out.println(" ,loop:" + loop);
+			}
+			if (loop == false) {
+				break;
+			} else {
+				count++;
+			}
+			System.out.println("*** count:" + count);
+
+		}
+		String answer = "";
+		if (count == 0) {
+			answer = "";
+		} else {
+			answer = strs[0].toString().substring(0, count);
+		}
+		System.out.println("");
+		System.out.println("answer:" + answer);
+
+		return answer;
+
+	}
+
+}
