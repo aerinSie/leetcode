@@ -1,0 +1,41 @@
+package leetcode;
+
+public class Leetcode28 {
+
+	public static void main(String[] args) {
+		strStr("hello", "ll");// 2
+		strStr("aaaaa", "bba");// -1
+	}
+
+	public static int strStr(String haystack, String needle) {
+		int ans = 0;
+		boolean findStr = false;
+		boolean keepLoop = false;
+		String[] token = haystack.split("");
+
+		for (int j = 0; j < haystack.length(); j++) {
+
+			// 先找頭
+			if (token[j].equals(String.valueOf(needle.charAt(0)))) {
+
+				findStr = true;
+				for (int i = 1; i < needle.length(); i++) {
+
+					// 比對後續的字
+					if (!token[j + 1].equals(needle.charAt(i))) {
+						keepLoop = false;
+					}
+				}
+			}
+			if (!keepLoop && findStr) {
+				ans = needle.length();
+				break;
+			}
+			if (!findStr) {
+				ans = -1;
+			}
+		}
+		System.out.println("ans=" + ans);
+		return ans;
+	}
+}
