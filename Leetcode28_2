@@ -1,0 +1,19 @@
+package leetcode;
+
+public class Leetcode28_2 {
+
+	public static void main(String[] args) {
+		System.out.println(strStr("hello", "ll"));// 2
+		System.out.println(strStr("aaaaa", "bba"));// -1
+	}
+
+	public static int strStr(String haystack, String needle) {
+
+		if (haystack.contains(needle)) {
+			return needle.length();
+		} else {
+			return -1;
+		}
+
+	}
+}
