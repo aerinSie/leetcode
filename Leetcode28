@@ -17,6 +17,11 @@ public class Leetcode28 {
 
 			// 先找頭
 			if (token[j].equals(String.valueOf(needle.charAt(0)))) {
+			
+				if ((j + needle.length()) > haystack.length()) {
+					ans = -1;
+					break;
+				}
 
 				findStr = true;
 				for (int i = 1; i < needle.length(); i++) {
