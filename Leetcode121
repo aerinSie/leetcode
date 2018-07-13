@@ -1,0 +1,28 @@
+package com.ntcidcl.service;
+
+public class Leetcode121 {
+
+	public static void main(String[] args) {
+		int[] x = { 7, 1, 5, 3, 6, 3 };
+		int[] y = { 7, 6, 4, 3, 1 };
+
+		System.out.println("maxProfit=" + maxProfit(x));// 5
+		System.out.println("maxProfit=" + maxProfit(y));// 0
+	}
+
+	public static int maxProfit(int[] prices) {
+		int max = 0;
+
+		for (int i = 0; i < prices.length; i++) {
+			for (int j = i + 1; j < prices.length; j++) {
+				if (max < (prices[j] - prices[i])) {
+					max = prices[j] - prices[i];
+					System.out.println("i=" + i + ",j=" + j + ",max=" + max);
+				}
+			}
+		}
+
+		return max;
+	}
+
+}
