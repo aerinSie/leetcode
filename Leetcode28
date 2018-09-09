@@ -5,8 +5,19 @@ public class Leetcode28 {
 	public static void main(String[] args) {
 		strStr("hello", "ll");// 2
 		strStr("aaaaa", "bba");// -1
+		strStr2("hello", "ll");// 2
+		strStr2("aaaaa", "bba");// -1
 	}
 
+	public static int strStr2(String haystack, String needle) {
+
+		if (haystack.contains(needle)) {
+			return needle.length();
+		} else {
+			return -1;
+		}
+
+	}
 	public static int strStr(String haystack, String needle) {
 		int ans = 0;
 		boolean findStr = false;
