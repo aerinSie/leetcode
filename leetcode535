@@ -1,0 +1,31 @@
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
+import java.util.HashMap;
+
+public class lt535 {
+
+
+	static HashMap map = new HashMap();
+
+	public String encode(String longUrl) {
+		String shortUrl = "";
+		try {
+
+			shortUrl = "http://tinyurl.com/"+Base64.getEncoder()
+					.encodeToString(Integer.toString(longUrl.hashCode()).getBytes("utf-8"));
+			map.put(shortUrl, longUrl);
+			
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return shortUrl;
+
+	}
+
+	public String decode(String shortUrl) {
+		
+		return (String) map.get(shortUrl);
+
+	}
+}
