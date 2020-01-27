@@ -1,0 +1,95 @@
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Leetcode1114 {
+
+    public static void main(String[] args) {
+        Foo foo = new Foo();
+        Runnable first = ()->{
+            try {
+                foo.first(()-> System.out.println("first"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        Runnable second = ()->{
+            try {
+                foo.second(()-> System.out.println("second"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        Runnable third = ()->{
+            try {
+                foo.third(()-> System.out.println("third"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+        Thread t1 = new Thread(first);
+        Thread t2 = new Thread(second);
+        Thread t3 = new Thread(third);
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+
+    public static class Foo {
+        private AtomicInteger count = new AtomicInteger(0);
+        ReentrantLock lock ;
+        Condition secondCondition;
+        Condition thirdCondition;
+
+        public Foo() {
+            lock = new ReentrantLock();
+            secondCondition = lock.newCondition();
+            thirdCondition = lock.newCondition();
+        }
+
+        public void first(Runnable printFirst) throws InterruptedException {
+
+            try{
+                lock.lock();
+
+                while (count.get() != 0) {
+                }
+                printFirst.run();
+                count.set(1);
+                secondCondition.signal();
+
+            }finally {
+                lock.unlock();
+            }
+        }
+
+        public void second(Runnable printSecond) throws InterruptedException {
+            try{
+                lock.lock();
+                while (count.get() != 1) {
+                    secondCondition.await();
+                }
+                printSecond.run();
+                count.set(2);
+                thirdCondition.signal();
+            }finally {
+                lock.unlock();
+            }
+        }
+
+        public void third(Runnable printThird) throws InterruptedException {
+            try{
+                lock.lock();
+                while (count.get() != 2) {
+                    thirdCondition.await();
+                }
+                printThird.run();
+                count.set(3);
+            }finally {
+                lock.unlock();
+            }
+        }
+    }
+}
