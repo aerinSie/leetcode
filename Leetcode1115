@@ -1,0 +1,80 @@
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Leetcode1115 {
+    public static void main(String[] args) {
+        FooBar fooBar = new FooBar(3);
+        Runnable first = ()->{
+            try {
+                fooBar.foo(()-> System.out.println("foo"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        Runnable second = ()->{
+            try {
+                fooBar.bar(()-> System.out.println("bar"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+
+        Thread t1 = new Thread(first);
+        Thread t2 = new Thread(second);
+        t1.start();
+        t2.start();
+
+    }
+
+    static class FooBar {
+        private int n;
+        ReentrantLock lock ;
+        Condition fooCondition;
+        Condition barCondition;
+        Integer flag = 0;
+
+
+        public FooBar(int n) {
+            this.n = n;
+            lock = new ReentrantLock();
+            fooCondition = lock.newCondition();
+            barCondition = lock.newCondition();
+        }
+
+        public void foo(Runnable printFoo) throws InterruptedException {
+
+            for (int i = 0; i < n; i++) {
+                try{
+                    lock.lock();
+                    if (flag != 0){
+                        fooCondition.await();
+                    }
+                    printFoo.run();
+                    flag = 1;
+                    barCondition.signal();
+                }finally {
+                    lock.unlock();
+                }
+            }
+        }
+
+        public void bar(Runnable printBar) throws InterruptedException {
+
+            for (int i = 0; i < n; i++) {
+                try {
+                    lock.lock();
+                    if (flag != 1){
+                        barCondition.await();
+                    }
+                    printBar.run();
+                    flag = 0;
+                    fooCondition.signal();
+                }finally {
+                    lock.unlock();
+                }
+            }
+        }
+    }
+}
