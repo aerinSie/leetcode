@@ -1,0 +1,112 @@
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.IntConsumer;
+
+public class Leetcode1116 {
+    public static void main(String[] args) {
+        ZeroEvenOdd zeroEvenOdd = new ZeroEvenOdd(2);
+        Runnable zero = ()->{
+            try {
+                zeroEvenOdd.zero(x-> System.out.println(x));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        Runnable even = ()->{
+            try {
+                zeroEvenOdd.even(x-> System.out.println(x));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        Runnable odd = ()->{
+            try {
+                zeroEvenOdd.odd(x-> System.out.println(x));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+        Thread t1 = new Thread(zero);
+        Thread t2 = new Thread(even);
+        Thread t3 = new Thread(odd);
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+
+    static class ZeroEvenOdd {
+        private int n;
+
+        ReentrantLock lock ;
+        Condition zeroCondition;
+        Condition evenCondition;
+        Condition oddCondition;
+        Integer flag = 0;
+
+        public ZeroEvenOdd(int n) {
+            this.n = n;
+            lock = new ReentrantLock();
+            zeroCondition = lock.newCondition();
+            evenCondition = lock.newCondition();
+            oddCondition = lock.newCondition();
+        }
+
+        // printNumber.accept(x) outputs "x", where x is an integer.
+        public void zero(IntConsumer printNumber) throws InterruptedException {
+            for(int i = 1; i <= n; i++){
+                try{
+                    lock.lock();
+                    if (flag != 0){
+                        zeroCondition.await();
+                    }
+                    printNumber.accept(0);
+                    flag = 1;
+                    evenCondition.signal();
+                }finally {
+                    lock.unlock();
+                }
+            }
+        }
+
+        public void even(IntConsumer printNumber) throws InterruptedException {
+            for(int i = 1; i <= n; i++){
+                try{
+                    lock.lock();
+                    if (flag != 1){
+                        evenCondition.await();
+                    }
+                    if(i % 2 == 0){
+                        printNumber.accept(i);
+                    }
+                    flag = 2;
+                    oddCondition.signal();
+                }finally {
+                    lock.unlock();
+                }
+
+            }
+
+        }
+
+        public void odd(IntConsumer printNumber) throws InterruptedException {
+            for(int i = 1; i <= n; i++){
+                try{
+                    lock.lock();
+                    if (flag != 2){
+                        oddCondition.await();
+                    }
+                    if(i % 2 == 1){
+                        printNumber.accept(i);
+                    }
+                    flag = 0;
+                    zeroCondition.signal();
+                }finally {
+                    lock.unlock();
+                }
+            }
+        }
+    }
+}
